@@ -1,2 +1,3 @@
 # aether
-An AI tutor  and social platform for college students.
+
+An AI tutor and social platform for college students.

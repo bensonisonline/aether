@@ -1,0 +1,16 @@
+:3000
+
+reverse_proxy {
+    to localhost:3001 localhost:3002 localhost:3003 localhost:3004
+    lb_policy random
+    health_timeout 5s
+    fail_timeout 10s
+    max_fails 3
+}
+
+encode gzip zstd
+header {
+    Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    X-Content-Type-Options    "nosniff"
+    X-Frame-Options           "DENY"
+}

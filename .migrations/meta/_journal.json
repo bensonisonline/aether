@@ -1,0 +1,41 @@
+{
+    "version": "7",
+    "dialect": "postgresql",
+    "entries": [
+        {
+            "idx": 0,
+            "version": "7",
+            "when": 1752923892879,
+            "tag": "20250719111812_init",
+            "breakpoints": true
+        },
+        {
+            "idx": 1,
+            "version": "7",
+            "when": 1752938360250,
+            "tag": "20250719151920_aromatic_nekra",
+            "breakpoints": true
+        },
+        {
+            "idx": 2,
+            "version": "7",
+            "when": 1752938414190,
+            "tag": "20250719152014_shallow_giant_man",
+            "breakpoints": true
+        },
+        {
+            "idx": 3,
+            "version": "7",
+            "when": 1753005941596,
+            "tag": "20250720100540_luxuriant_morg",
+            "breakpoints": true
+        },
+        {
+            "idx": 4,
+            "version": "7",
+            "when": 1753011326009,
+            "tag": "20250720113525_wild_bastion",
+            "breakpoints": true
+        }
+    ]
+}
