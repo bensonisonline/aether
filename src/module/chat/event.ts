@@ -14,18 +14,18 @@ export async function chatSessionStarted(
         userMessage,
         assistantMessage,
     });
-    console.log(userMessage, assistantMessage)
+    console.log(userMessage, assistantMessage);
 }
 
 export async function subscribeToChatSessionStarted() {
     return await queue.subscribe("chat:session:started", async (message) => {
-        console.log(message)
+        console.log(message);
         const { chatId, userMessage, assistantMessage } = message;
         const title = await titleService.generateFromMessages(
             userMessage,
             assistantMessage,
         );
         await chatSessionRepo.updateTitle(chatId, title);
-        console.log(title)
+        console.log(title);
     });
 }

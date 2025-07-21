@@ -5,7 +5,7 @@ import { AuthController } from "./controller/auth";
 
 const auth = new AuthController();
 
-export const router = Router()
+export const authRouter = Router()
     .get("/.well-known", (_req: Request, res: Response) => {
         const jwks = getJWKS();
         return res.status(200).send(jwks);
@@ -16,3 +16,5 @@ export const router = Router()
     .post("/login/otp", auth.otpLogin)
     .post("/verify/otp", auth.verifyLogin)
     .use(otpController);
+
+export const userRouter = Router();

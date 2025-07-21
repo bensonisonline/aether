@@ -2,7 +2,7 @@ import { SuccessResponse } from "../shared/responses";
 import { HttpStatus } from "../shared/http-status";
 import { Router, type Request, type Response } from "express";
 // import { router as users } from "@/modules/identity/users/router";
-import { router as auth } from "@/module/identity/router";
+import { authRouter } from "@/module/identity/router";
 import { router as chat } from "@/module/chat/router/chat";
 
 export const router = Router();
@@ -16,5 +16,5 @@ router
         return res.status(HttpStatus.OK).send(result);
     })
     // .use("/users", users)
-    .use("/auth", auth)
+    .use("/auth", authRouter)
     .use("/chat", chat);

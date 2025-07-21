@@ -40,7 +40,7 @@ export const titleService = {
         userMessage: string,
         assistantMessage: string,
     ): Promise<string> {
-        const model = "llama3-8b-8192"; 
+        const model = "llama3-8b-8192";
 
         const userPrompt = `
     User Message: ${userMessage}

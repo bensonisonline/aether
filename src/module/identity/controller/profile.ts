@@ -25,4 +25,14 @@ export class ProfileController {
         const result = await this.service.findById(req.params.id);
         return res.status(result.status).send(result);
     }
+
+    async getProfileByUserId(req: Request, res: Response) {
+        const result = await this.service.findByUserId(req.params.id);
+        return res.status(result.status).send(result);
+    }
+
+    async updateProfile(req: Request, res: Response) {
+        const result = await this.service.update(req.params.id, req.body);
+        return res.status(result.status).send(result);
+    }
 }
