@@ -11,10 +11,8 @@ export const authRouter = Router()
         return res.status(200).send(jwks);
     })
     .post("/register", auth.register)
-    .post("/login", auth.login)
-    // .post("/login/biometric", auth.biometricLogin)
     .post("/login/otp", auth.otpLogin)
-    .post("/verify/otp", auth.verifyLogin)
+    .post("/login/verify", auth.verifyLogin)
     .use(otpController);
 
 export const userRouter = Router();

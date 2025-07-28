@@ -12,7 +12,6 @@ export const user = pgTable(
     {
         id: uuid().defaultRandom().primaryKey().notNull(),
         email: varchar({ length: 255 }).notNull().unique(),
-        passwordHash: varchar({ length: 255 }).notNull(),
         isSuperUser: boolean().default(false),
         gender: varchar({ enum: ["male", "female"] }),
         dateOfBirth: timestamp({ withTimezone: true }),

@@ -3,8 +3,9 @@ import { transporter } from "./transport";
 import OTPEmail from "./email/OTPEmail";
 import React from "react";
 import WelcomeEmail from "./email/WelcomeEmail";
+import LoginEmail from "./email/LoginEmail";
 
-type EmailType = "otp" | "welcome";
+type EmailType = "otp" | "welcome" | "login";
 
 export async function sendEmail(
     type: EmailType,
@@ -30,10 +31,18 @@ export async function sendEmail(
                 }),
             );
             break;
+        case "login":
+            if (!payload.code) throw new Error("Missing name or message");
+            html = await render(
+                React.createElement(LoginEmail, {
+                    code: payload.code,
+                }),
+            );
+            break;
     }
     try {
         const result = await transporter.sendMail({
-            from: "Aether AI <no-reply@aether.ai>",
+            from: "Aether <no-reply@aether.ai>",
             to,
             subject,
             html,

@@ -20,8 +20,7 @@ export const profile = pgTable(
 
         //   profile fields
         username: varchar({ length: 50 }).notNull().unique(),
-        firstName: varchar({ length: 100 }).notNull(),
-        lastName: varchar({ length: 100 }).notNull(),
+        name: varchar({ length: 200 }).notNull(),
         avatarUrl: text(),
         bio: text(),
 
@@ -34,6 +33,7 @@ export const profile = pgTable(
         level: varchar({ length: 100 }),
         matricNumber: varchar({ length: 100 }),
 
+        // work
         organization: varchar({ length: 100 }),
         industry: varchar({ length: 100 }),
         role: varchar({ length: 100 }),

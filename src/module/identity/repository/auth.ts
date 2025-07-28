@@ -19,9 +19,7 @@ export class AuthRepository {
                 .insert(user)
                 .values({
                     email: u.email,
-                    passwordHash: u.passwordHash,
                     isVerified: true,
-                    gender: u.gender,
                 })
                 .returning();
             const tokenObject: IToken = {

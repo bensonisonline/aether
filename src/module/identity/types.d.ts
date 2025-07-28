@@ -7,18 +7,14 @@ export type CreateOtpAuditLog = {
 };
 
 export interface IAuthUser {
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
-    passwordHash: string;
-    gender: "male" | "female";
     fingerprint: string;
     platform: "mobile" | "browser";
 }
 
 export interface ILogin {
     email: string;
-    passwordHash: string;
     fingerprint: string;
     platform: "mobile" | "browser";
 }
