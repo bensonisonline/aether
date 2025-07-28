@@ -15,12 +15,6 @@ import { AuthRepository } from "../repository/auth";
 import { UserRepository } from "../repository/user";
 import { OAuth2Client } from "google-auth-library"
 
-const client = new OAuth2Client({
-    client_id: Bun.env.GOOGLE_CLIENT_ID,
-    client_secret: Bun.env.GOOGLE_CLIENT_SECRET,
-    redirectUri: Bun.env.GOOGLE_REDIRECT
-})
-
 
 export class AuthService {
     private authRepo: AuthRepository;
@@ -120,7 +114,21 @@ export class AuthService {
         );
     };
 
-    google = async (code: string, redirectURI: string, codeVerifier: string, fingerprint: string, platform: "mobile" | "browser") => {
+    google = async (code: string, redirectURI: string, codeVerifier: string, fingerprint: string, oAuthType: "android" | "ios" | "web", platform: "mobile" | "browser") => {
+
+
+        const clientId = oAuthType === 'android'
+            ? Bun.env.GOOGLE_ANDROID_CLIENT_ID
+            : Bun.env.GOOGLE_CLIENT_ID;
+
+
+        const client = new OAuth2Client({
+            client_id: clientId,
+            client_secret: oAuthType !== 'android' ? Bun.env.GOOGLE_CLIENT_SECRET : undefined,
+            redirect_uris: ["aetherapp://redirect", "http://localhost:19006"]
+        })
+
+
         if (!code) throw new BadRequestError("Authentication code missing");
         if (!redirectURI) throw new BadRequestError("Missing redirect URI");
 
