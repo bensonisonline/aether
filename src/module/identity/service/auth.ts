@@ -1,7 +1,6 @@
 import { publishUserCreated } from "@/module/identity/event";
 import { OtpRepository } from "@/module/identity/otp/repository";
 import type { IAuthUser } from "@/module/identity/types";
-import { Crypto as Hashing } from "@/module/identity/utils";
 import { log } from "@/pkg/log";
 import { sendEmail } from "@/pkg/mailer/sendEmail";
 import { Events } from "@/shared/event-enum";
@@ -11,24 +10,28 @@ import {
     NotFoundError,
     SuccessResponse,
 } from "@/shared/responses";
-import { AuthRepository } from "../repository/auth";
-import { SessionRepository } from "../repository/session";
-import { UserRepository } from "../repository/user";
 import { formatOtpStrict } from "@/shared/utils";
+import { AuthRepository } from "../repository/auth";
+import { UserRepository } from "../repository/user";
+import { OAuth2Client } from "google-auth-library"
+
+const client = new OAuth2Client({
+    client_id: Bun.env.GOOGLE_CLIENT_ID,
+    client_secret: Bun.env.GOOGLE_CLIENT_SECRET,
+    redirectUri: Bun.env.GOOGLE_REDIRECT
+})
+
 
 export class AuthService {
     private authRepo: AuthRepository;
     private userRepo: UserRepository;
-    private session: SessionRepository;
     private otp: OtpRepository;
-    private hash: Hashing;
+
 
     constructor() {
         this.authRepo = new AuthRepository();
         this.userRepo = new UserRepository();
-        this.session = new SessionRepository();
         this.otp = new OtpRepository();
-        this.hash = new Hashing();
     }
 
     createUser = async (u: IAuthUser) => {
@@ -116,4 +119,54 @@ export class AuthService {
             { accessToken },
         );
     };
+
+    google = async (code: string, redirectURI: string, codeVerifier: string, fingerprint: string, platform: "mobile" | "browser") => {
+        if (!code) throw new BadRequestError("Authentication code missing");
+        if (!redirectURI) throw new BadRequestError("Missing redirect URI");
+
+        const { tokens } = await client.getToken({ code, codeVerifier, redirect_uri: redirectURI });
+
+        client.setCredentials(tokens)
+
+        const ticket = await client.verifyIdToken({
+            audience: Bun.env.GOOGLE_CLIENT_ID,
+            idToken: tokens.id_token!,
+        });
+
+        const payload = ticket.getPayload();
+
+        const email = payload?.email;
+        const name = payload?.name;
+
+        const user = await this.userRepo.findUserByEmail(email!);
+
+        if (!user) {
+            const { user: u, accessToken } = await this.authRepo.createUser({
+                email: email!,
+                name: name!,
+                platform,
+                fingerprint,
+            });
+            log.info({
+                event: Events.CREATED,
+                message: "A new user has been created",
+                userId: u.id,
+            });
+
+            const jobId = crypto.randomUUID();
+            await publishUserCreated(u.id, {
+                jobId,
+                name
+            });
+            return SuccessResponse(HttpStatus.OK, "Account created successfully.", { accessToken });
+        } else {
+            const { accessToken } = await this.authRepo.completeLogin({
+                id: user.id,
+                email: user.email,
+                status: user.status,
+                fingerprint,
+            });
+            return SuccessResponse(HttpStatus.OK, "Login was successful. Welcome onboard", { accessToken });
+        }
+    }
 }

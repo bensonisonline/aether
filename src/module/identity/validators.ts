@@ -4,18 +4,6 @@ export const emailSchema = z
     .email("Invalid email format")
     .max(320, "Email too long");
 
-export const passwordSchema = z
-    .string()
-    .min(6, "Password must be at least 8 characters")
-    .max(12, "Password too long")
-    .refine((val) => /[a-z]/.test(val), "Must contain a lowercase letter")
-    .refine((val) => /[A-Z]/.test(val), "Must contain an uppercase letter")
-    .refine((val) => /\d/.test(val), "Must contain a digit")
-    .refine(
-        (val) => /[!@#$%^&*()\-_=+{};:,<.>]/.test(val),
-        "Must contain a special character",
-    );
-
 export const usernameSchema = z.object({
     username: z
         .string()
@@ -44,14 +32,13 @@ export const otpSchema = z
 
 export const loginSchema = z.object({
     email: emailSchema,
-    password: z.string().min(1, "Password is required"),
     fingerprint: z.string(),
     platform: z.enum(["mobile", "browser"]),
 });
 
 export const registerSchema = z.object({
     email: emailSchema,
-    password: passwordSchema,
+    name: z.string().max(50),
     fingerprint: z.string(),
     platform: z.enum(["mobile", "browser"]),
 });

@@ -6,7 +6,6 @@ import { otpLog } from "./otp/schema";
 import { log } from "@/pkg/log";
 import path from "path";
 import fs from "fs";
-import type { User } from "./schema/user";
 import { ProfileRepository } from "./repository/profile";
 
 let privateCryptoKey: CryptoKey;
@@ -115,10 +114,6 @@ export const otpCleanupCron = (time: string) => {
     );
 };
 
-export function sanitizeUser(user: User): Omit<User, "passwordHash"> {
-    const { passwordHash, ...safeUser } = user;
-    return safeUser;
-}
 
 export async function generateUsernameFromEmail(
     email: string,
