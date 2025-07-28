@@ -191,8 +191,7 @@ export const ChatService = {
                 await ChatHistoryRepository.addMessage(sessionId, assistantMsg);
 
                 // Queue title generation for first interaction
-                    await chatSessionStarted(sessionId, userMessage, content);
-                
+                await chatSessionStarted(sessionId, userMessage, content);
             });
         } catch (error) {
             log.error({
