@@ -11,7 +11,7 @@ export const authRouter = Router()
         return res.status(200).send(jwks);
     })
     .post("/register", auth.register)
-    .post("/google", auth.googleAuth)
+    .post("/google", auth.google)
     .post("/login/otp", auth.otpLogin)
     .post("/login/verify", auth.verifyLogin)
     .use(otpController);

@@ -22,7 +22,7 @@ export class SessionRepository {
         return new SignJWT({ user })
             .setProtectedHeader({ alg: "RS256", kid: "aether-auth-key" })
             .setIssuedAt(SessionRepository.now)
-            .setIssuer("river-auth")
+            .setIssuer("aether-auth")
             .setExpirationTime(SessionRepository.accessTokenExpiration)
             .sign(privateKey);
     };

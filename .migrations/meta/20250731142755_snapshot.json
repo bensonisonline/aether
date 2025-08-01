@@ -1,5 +1,5 @@
 {
-    "id": "6ce57f74-e6cf-4267-a5c6-74c92c83c40c",
+    "id": "9fb6a3a1-e97f-4531-bb2d-0c7e6141c77c",
     "prevId": "00000000-0000-0000-0000-000000000000",
     "version": "7",
     "dialect": "postgresql",
@@ -10,32 +10,20 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDM4PAVRZ2H69W1Y4DRP'"
+                    "default": "gen_random_uuid()"
                 },
                 "user_id": {
                     "name": "user_id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": false,
                     "notNull": true
                 },
                 "username": {
                     "name": "username",
                     "type": "varchar(50)",
-                    "primaryKey": false,
-                    "notNull": true
-                },
-                "first_name": {
-                    "name": "first_name",
-                    "type": "varchar(100)",
-                    "primaryKey": false,
-                    "notNull": true
-                },
-                "last_name": {
-                    "name": "last_name",
-                    "type": "varchar(100)",
                     "primaryKey": false,
                     "notNull": true
                 },
@@ -173,10 +161,10 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDM6MA5Y5SE81RQVF5MT'"
+                    "default": "gen_random_uuid()"
                 },
                 "profile_id": {
                     "name": "profile_id",
@@ -218,14 +206,14 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDMFZYKB9BR8X5CHZQNF'"
+                    "default": "gen_random_uuid()"
                 },
                 "user_id": {
                     "name": "user_id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": false,
                     "notNull": true
                 },
@@ -335,19 +323,20 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDM06SVRXXJEGPPDZETM'"
+                    "default": "gen_random_uuid()"
+                },
+                "name": {
+                    "name": "name",
+                    "type": "varchar(200)",
+                    "primaryKey": false,
+                    "notNull": true,
+                    "default": "'Anonymous'"
                 },
                 "email": {
                     "name": "email",
-                    "type": "varchar(255)",
-                    "primaryKey": false,
-                    "notNull": true
-                },
-                "password_hash": {
-                    "name": "password_hash",
                     "type": "varchar(255)",
                     "primaryKey": false,
                     "notNull": true
@@ -493,14 +482,14 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDMWNQ66HE16RNQ658F4'"
+                    "default": "gen_random_uuid()"
                 },
                 "session_id": {
                     "name": "session_id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": false,
                     "notNull": true
                 },
@@ -548,14 +537,14 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDMWPE9Q00YAV280Y31H'"
+                    "default": "gen_random_uuid()"
                 },
                 "user_id": {
                     "name": "user_id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": false,
                     "notNull": true
                 },
@@ -607,10 +596,10 @@
             "columns": {
                 "id": {
                     "name": "id",
-                    "type": "varchar(50)",
+                    "type": "uuid",
                     "primaryKey": true,
                     "notNull": true,
-                    "default": "'01K0QGDDN4HMGBMADY64BAFYVH'"
+                    "default": "gen_random_uuid()"
                 },
                 "key": {
                     "name": "key",

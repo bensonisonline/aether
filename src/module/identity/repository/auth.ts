@@ -20,10 +20,12 @@ export class AuthRepository {
                 .values({
                     email: u.email,
                     isVerified: true,
+                    name: u.name,
                 })
                 .returning();
             const tokenObject: IToken = {
                 id: created.id,
+                name: created.name,
                 email: created.email,
                 status: "active",
                 fingerprint: u.fingerprint,

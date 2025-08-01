@@ -1,9 +1,7 @@
 CREATE TABLE "profiles" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDM4PAVRZ2H69W1Y4DRP' NOT NULL,
-	"user_id" varchar(50) NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
 	"username" varchar(50) NOT NULL,
-	"first_name" varchar(100) NOT NULL,
-	"last_name" varchar(100) NOT NULL,
 	"avatar_url" text,
 	"bio" text,
 	"type" varchar DEFAULT 'student' NOT NULL,
@@ -22,7 +20,7 @@ CREATE TABLE "profiles" (
 );
 --> statement-breakpoint
 CREATE TABLE "username_changes" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDM6MA5Y5SE81RQVF5MT' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"profile_id" uuid NOT NULL,
 	"old_username" varchar(32) NOT NULL,
 	"new_username" varchar(32) NOT NULL,
@@ -30,8 +28,8 @@ CREATE TABLE "username_changes" (
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDMFZYKB9BR8X5CHZQNF' NOT NULL,
-	"user_id" varchar(50) NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
 	"fingerprint" text NOT NULL,
 	"platform" varchar NOT NULL,
 	"provider" varchar DEFAULT 'local' NOT NULL,
@@ -44,9 +42,9 @@ CREATE TABLE "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDM06SVRXXJEGPPDZETM' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(200) DEFAULT 'Anonymous' NOT NULL,
 	"email" varchar(255) NOT NULL,
-	"password_hash" varchar(255) NOT NULL,
 	"is_super_user" boolean DEFAULT false,
 	"gender" varchar,
 	"date_of_birth" timestamp with time zone,
@@ -68,16 +66,16 @@ CREATE TABLE "otp_logs" (
 );
 --> statement-breakpoint
 CREATE TABLE "chat_messages" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDMWNQ66HE16RNQ658F4' NOT NULL,
-	"session_id" varchar(50) NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"session_id" uuid NOT NULL,
 	"role" varchar NOT NULL,
 	"content" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "chat_sessions" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDMWPE9Q00YAV280Y31H' NOT NULL,
-	"user_id" varchar(50) NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
 	"prompt_key" text NOT NULL,
 	"model" varchar DEFAULT 'llama3-70b-8192' NOT NULL,
 	"title" varchar(100),
@@ -86,7 +84,7 @@ CREATE TABLE "chat_sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE "ai_prompts" (
-	"id" varchar(50) PRIMARY KEY DEFAULT '01K0QGDDN4HMGBMADY64BAFYVH' NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"key" varchar(30) DEFAULT 'TUTOR' NOT NULL,
 	"name" varchar NOT NULL,
 	"description" text,

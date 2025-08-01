@@ -7,6 +7,7 @@ import { log } from "@/pkg/log";
 import path from "path";
 import fs from "fs";
 import { ProfileRepository } from "./repository/profile";
+import { OAuth2Client } from "google-auth-library";
 
 let privateCryptoKey: CryptoKey;
 let publicCryptoKey: CryptoKey;
@@ -114,7 +115,6 @@ export const otpCleanupCron = (time: string) => {
     );
 };
 
-
 export async function generateUsernameFromEmail(
     email: string,
 ): Promise<string> {
@@ -146,4 +146,16 @@ export async function generateUsernameFromEmail(
     }
 
     return username;
+}
+
+
+const client = new OAuth2Client(Bun.env.FIREBASE_WEB_CLIENT_ID);
+
+export async function verifyGoogleIdToken(idToken: string) {
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: Bun.env.FIREBASE_WEB_CLIENT_ID,
+    });
+
+    return ticket.getPayload();
 }

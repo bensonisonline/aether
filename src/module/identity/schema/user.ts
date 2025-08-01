@@ -11,6 +11,7 @@ export const user = pgTable(
     "users",
     {
         id: uuid().defaultRandom().primaryKey().notNull(),
+        name: varchar({ length: 200 }).notNull().default("Anonymous"),
         email: varchar({ length: 255 }).notNull().unique(),
         isSuperUser: boolean().default(false),
         gender: varchar({ enum: ["male", "female"] }),

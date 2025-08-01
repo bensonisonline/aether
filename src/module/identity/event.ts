@@ -18,7 +18,12 @@ export const subscribeToUserCreated = async () => {
         const user = await userRepo.findUserById(userId);
         if (!user) throw new NotFoundError("User not found");
         const username = await generateUsernameFromEmail(user.email);
-        await profileRepo.createProfile(user.id, username, data.name);
+        await profileRepo.createProfile(
+            user.id,
+            username,
+            data.name,
+            data.avatarUrl,
+        );
 
         setTimeout(
             async () => {

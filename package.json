@@ -14,7 +14,8 @@
         "dotenv": "^17.2.1",
         "drizzle-orm": "^0.44.3",
         "express": "^5.1.0",
-        "express-rate-limit": "^7.5.1",
+        "express-rate-limit": "^8.0.1",
+        "firebase-admin": "^13.4.0",
         "google-auth-library": "^10.2.0",
         "groq-sdk": "^0.27.0",
         "helmet": "^8.1.0",
@@ -62,5 +63,9 @@
         "migrate": "bun drizzle-kit migrate --config drizzle/drizzle-dev.config.ts",
         "generate": "bun drizzle-kit generate --config drizzle/drizzle-dev.config.ts",
         "seed": "bun run script/seed-prompts.ts"
-    }
+    },
+    "trustedDependencies": [
+        "@firebase/util",
+        "protobufjs"
+    ]
 }

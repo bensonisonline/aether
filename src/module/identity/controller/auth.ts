@@ -13,12 +13,13 @@ export class AuthController {
         res.status(result.status).send(result);
     }
 
-    async googleAuth(req: Request, res: Response) {
-        const ctx = getRequestContext();
-        const platform = ctx!.platform;
-        const { code, redirectURI, codeVerifier, fingerprint } = req.body;
-        const result = await authService.google(code, redirectURI, codeVerifier, fingerprint, platform);
+    async google(req: Request, res: Response) {
+        const { idToken, fingerprint } = req.body;
 
+        const ctx = getRequestContext();
+        const platform = ctx!.platform ?? "mobile";
+
+        const result = await authService.google(idToken, fingerprint, platform);
         return res.status(result.status).send(result);
     }
 

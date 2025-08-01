@@ -29,7 +29,9 @@ export interface ISession {
 export interface IToken {
     id: string;
     email: string;
+    name: string;
     status: "active" | "inactive" | "suspended";
+    avatarUrl?: string;
     // role: "owner" | "staff" | "admin" | "support";
 
     // activeBusinessId?: string;

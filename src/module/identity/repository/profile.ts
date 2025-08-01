@@ -3,8 +3,13 @@ import { and, eq, sql } from "drizzle-orm";
 import { profile, usernameChange, type Profile } from "../schema/profile";
 
 export class ProfileRepository {
-    createProfile(userId: string, username: string, name: string) {
-        return db.insert(profile).values({ userId, username, name });
+    createProfile(
+        userId: string,
+        username: string,
+        name: string,
+        avatarUrl?: string,
+    ) {
+        return db.insert(profile).values({ userId, username, name, avatarUrl });
     }
     async findById(id: string) {
         const [record] = await db

@@ -7,20 +7,20 @@ import { Events } from "@/shared/event-enum";
 import { HttpStatus } from "@/shared/http-status";
 import {
     BadRequestError,
+    InternalServerError,
     NotFoundError,
     SuccessResponse,
 } from "@/shared/responses";
 import { formatOtpStrict } from "@/shared/utils";
 import { AuthRepository } from "../repository/auth";
 import { UserRepository } from "../repository/user";
-import { OAuth2Client } from "google-auth-library"
+import { verifyGoogleIdToken } from "../utils";
 
 
 export class AuthService {
     private authRepo: AuthRepository;
     private userRepo: UserRepository;
     private otp: OtpRepository;
-
 
     constructor() {
         this.authRepo = new AuthRepository();
@@ -80,7 +80,7 @@ export class AuthService {
         return SuccessResponse(HttpStatus.OK, "OTP was sent successfully", {});
     };
 
-    verifyLogin = async (email: string, otp: string) => {
+    verifyLogin = async (email: string, otp: string, fingerprint: string) => {
         const stored = await this.otp.get(`${email}`, "login");
 
         if (!stored || stored !== otp) {
@@ -101,11 +101,15 @@ export class AuthService {
             event: "verified",
         });
         const user = await this.userRepo.findUserByEmail(email);
+        const profile = await this.userRepo.getUserAndProfile(user.id);
 
         const { accessToken } = await this.authRepo.completeLogin({
-            id: user.id,
-            email: user.email,
-            status: user.status,
+            id: profile.users.id,
+            name: profile.users.name,
+            email: profile.users.email,
+            status: profile.users.status,
+            fingerprint,
+            avatarUrl: profile.profiles?.avatarUrl!,
         });
         return SuccessResponse(
             HttpStatus.OK,
@@ -114,67 +118,82 @@ export class AuthService {
         );
     };
 
-    google = async (code: string, redirectURI: string, codeVerifier: string, fingerprint: string, oAuthType: "android" | "ios" | "web", platform: "mobile" | "browser") => {
+    async google(
+        code: string,
+        fingerprint: string,
+        platform: "mobile" | "browser" = "mobile",
+    ) {
+        try {
+            if (!code) throw new BadRequestError("Authentication code missing");
 
+            let decoded;
 
-        const clientId = oAuthType === 'android'
-            ? Bun.env.GOOGLE_ANDROID_CLIENT_ID
-            : Bun.env.GOOGLE_CLIENT_ID;
+            try {
+                decoded = await verifyGoogleIdToken(code);
+            } catch (error) {
+                throw new BadRequestError("Invalid token");
+            }
 
+            if (!decoded) throw new BadRequestError("Invalid token");
 
-        const client = new OAuth2Client({
-            client_id: clientId,
-            client_secret: oAuthType !== 'android' ? Bun.env.GOOGLE_CLIENT_SECRET : undefined,
-            redirect_uris: ["aetherapp://redirect", "http://localhost:19006"]
-        })
+            const { email, name, picture } = decoded;
 
+            if (!email) throw new BadRequestError("No email in google token");
 
-        if (!code) throw new BadRequestError("Authentication code missing");
-        if (!redirectURI) throw new BadRequestError("Missing redirect URI");
+            // Find or create user
+            const user = await this.userRepo.findUserByEmail(email!);
+            if (!user) {
+                const { user: newUser, accessToken } =
+                    await this.authRepo.createUser({
+                        email: email!,
+                        name: name!,
+                        platform,
+                        fingerprint,
+                    });
 
-        const { tokens } = await client.getToken({ code, codeVerifier, redirect_uri: redirectURI });
+                log.info({
+                    event: Events.CREATED,
+                    message: "A new user has been created",
+                    userId: newUser.id,
+                });
 
-        client.setCredentials(tokens)
+                const jobId = crypto.randomUUID();
+                await publishUserCreated(newUser.id, {
+                    jobId,
+                    name,
+                    picture,
+                });
 
-        const ticket = await client.verifyIdToken({
-            audience: Bun.env.GOOGLE_CLIENT_ID,
-            idToken: tokens.id_token!,
-        });
+                return SuccessResponse(
+                    HttpStatus.OK,
+                    "Account created successfully.",
+                    { accessToken },
+                );
+            } else {
+                const { accessToken } = await this.authRepo.completeLogin({
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    status: user.status,
+                    fingerprint,
+                    avatarUrl: picture!,
+                });
 
-        const payload = ticket.getPayload();
-
-        const email = payload?.email;
-        const name = payload?.name;
-
-        const user = await this.userRepo.findUserByEmail(email!);
-
-        if (!user) {
-            const { user: u, accessToken } = await this.authRepo.createUser({
-                email: email!,
-                name: name!,
-                platform,
-                fingerprint,
+                return SuccessResponse(
+                    HttpStatus.OK,
+                    "Login was successful. Welcome onboard",
+                    { accessToken },
+                );
+            }
+        } catch (error: any) {
+            log.error({
+                event: Events.AUTH_FAILED,
+                message: error.message,
+                error: error.stack,
             });
-            log.info({
-                event: Events.CREATED,
-                message: "A new user has been created",
-                userId: u.id,
-            });
-
-            const jobId = crypto.randomUUID();
-            await publishUserCreated(u.id, {
-                jobId,
-                name
-            });
-            return SuccessResponse(HttpStatus.OK, "Account created successfully.", { accessToken });
-        } else {
-            const { accessToken } = await this.authRepo.completeLogin({
-                id: user.id,
-                email: user.email,
-                status: user.status,
-                fingerprint,
-            });
-            return SuccessResponse(HttpStatus.OK, "Login was successful. Welcome onboard", { accessToken });
+            throw new InternalServerError(
+                `Failed to authenticate with Google: ${error.message}`,
+            );
         }
     }
 }
