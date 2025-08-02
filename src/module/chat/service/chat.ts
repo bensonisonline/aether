@@ -1,15 +1,15 @@
 import { db } from "@/infra/db";
 import { chatCompletion, type ChatCompletionMessageParam } from "@/infra/groq";
+import { UserRepository } from "@/module/identity/repository/user";
+import { log } from "@/pkg/log";
+import { HttpStatus } from "@/shared/http-status";
+import { NotFoundError, SuccessResponse } from "@/shared/responses";
+import Mustache from "mustache";
+import { chatSessionStarted } from "../event";
+import { ChatHistoryRepository } from "../repository/chat-history";
 import { ChatMessageRepository } from "../repository/chat-message";
 import { ChatSessionRepository } from "../repository/chat-session";
-import { chatSessionStarted } from "../event";
 import { PromptRepository, type Key } from "../repository/prompt";
-import { SuccessResponse } from "@/shared/responses";
-import { HttpStatus } from "@/shared/http-status";
-import { ChatHistoryRepository } from "../repository/chat-history";
-import { log } from "@/pkg/log";
-import Mustache from "mustache";
-import { UserRepository } from "@/module/identity/repository/user";
 
 const chatMessage = new ChatMessageRepository();
 const chatSession = new ChatSessionRepository();
@@ -35,7 +35,7 @@ export const ChatService = {
         additionalData?: Record<string, any>,
     ): Promise<UserContext> {
         const user = await userRepo.getUserAndProfile(userId);
-        if (!user) throw new Error("User not found");
+        if (!user) throw new NotFoundError("User not found");
 
         const profileType = user.profiles?.type || "student";
 

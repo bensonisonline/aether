@@ -148,7 +148,6 @@ export async function generateUsernameFromEmail(
     return username;
 }
 
-
 const client = new OAuth2Client(Bun.env.FIREBASE_WEB_CLIENT_ID);
 
 export async function verifyGoogleIdToken(idToken: string) {

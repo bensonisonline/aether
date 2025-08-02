@@ -5,7 +5,8 @@ import { env } from "bun";
 const numCPUs = cpus().length;
 const isProd = env.ENV === "production";
 
-// Cluster mode only in production
+// Creates multiple servers in production.
+
 if (isProd && cluster.isPrimary) {
     console.log(
         `🚀 Primary PID ${process.pid} is running. Forking ${numCPUs} workers...`,

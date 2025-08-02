@@ -1,6 +1,5 @@
 import admin from "firebase-admin";
 
-
 if (!admin.apps.length) {
     const serviceAccount = {
         type: Bun.env.FIREBASE_TYPE,
@@ -23,7 +22,6 @@ if (!admin.apps.length) {
         projectId: Bun.env.FIREBASE_PROJECT_ID,
     });
 }
-
 
 export const firebaseAuth = admin.auth();
 export default admin;

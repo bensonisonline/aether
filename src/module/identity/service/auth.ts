@@ -16,7 +16,6 @@ import { AuthRepository } from "../repository/auth";
 import { UserRepository } from "../repository/user";
 import { verifyGoogleIdToken } from "../utils";
 
-
 export class AuthService {
     private authRepo: AuthRepository;
     private userRepo: UserRepository;
